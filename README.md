@@ -28,3 +28,16 @@ using 用于引用名称空间，（引用微软已经做好的类）相当于C�
 ## Step-into Step-over Step-out
 Step-into遇到子函数就继续单步入执行。Step-over不会进入子函数，而是把子函数执行完再停下来。Step-out当单步执行到子函数时，可以执行完子函数余下的部分，并且返回上一函数。
 ## 观察局部变量的值与变化
+# 操作符
+https://www.runoob.com/csharp/csharp-operators.html
+# 传值参数和引用参数和输出形参
+值参数是方法之外变量的副本，对副本的操作不会影响到方法外部的变量。而引用参数不会对传进来的值建副本，引用参数指向的地址就是实际参数的地址。
+所以传值参数引用时变量和参数指向同一个内存地址，引用参数引用时是参数指向变量再指向内存地址。
+## 数组参数
+必须是形参列表中的最后一个，由params修饰，eg String.Format String.Split方法。
+## 具名参数
+大概就是 创建一个方法 static void eg{string name, int age} {Console.WriteLine("Hello{0} you are {1}");},然后再另一个方法里面调用 eg(age:15, name:"Moe_Nya");
+## 可选参数
+参数具有默认值而变得“可选”。比如参数在声明的时候就给它默认值：static void eg{string name = "Moe_Nya", int age = 15} {Console.WriteLine("Hello{0} you are {1}");}
+## 扩展方法（this）注意“this”的使用
+顾名思义自己弄一个方法出来，具体操作如下 public static double Round(this double put，int out) {double result = Math.Round(put, put); return result} 在另一个方法中 来简化小数位数 double x = 3.1415926; double y = x.Round(4); *这里的x.Round如果没有上面的this的话是不存在的，就是说这里的Round是自己创造的* 。
