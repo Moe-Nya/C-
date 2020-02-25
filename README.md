@@ -1,7 +1,7 @@
 # C-
 my study notes
 单纯的用来做一个C#学习的笔记，不要问我为啥变成C-了，我也不知道。
-Solution 解决方案 一个solution里面可以有多个project。
+### Solution 解决方案 一个solution里面可以有多个project。
 # 类 class 
 类 构成程序的主体 名称空间 namespace 将类组织在一起
 C#是完全面向对象的，所有程序都要包括进类。
@@ -34,10 +34,37 @@ https://www.runoob.com/csharp/csharp-operators.html
 值参数是方法之外变量的副本，对副本的操作不会影响到方法外部的变量。而引用参数不会对传进来的值建副本，引用参数指向的地址就是实际参数的地址。
 所以传值参数引用时变量和参数指向同一个内存地址，引用参数引用时是参数指向变量再指向内存地址。
 ## 数组参数
-必须是形参列表中的最后一个，由params修饰，eg String.Format String.Split方法。
+*必须是形参列表中的最后一个，由params修饰*，eg String.Format String.Split方法。
 ## 具名参数
 大概就是 创建一个方法 static void eg{string name, int age} {Console.WriteLine("Hello{0} you are {1}");},然后再另一个方法里面调用 eg(age:15, name:"Moe_Nya");
 ## 可选参数
 参数具有默认值而变得“可选”。比如参数在声明的时候就给它默认值：static void eg{string name = "Moe_Nya", int age = 15} {Console.WriteLine("Hello{0} you are {1}");}
 ## 扩展方法（this）注意“this”的使用
-顾名思义自己弄一个方法出来，具体操作如下 public static double Round(this double put，int out) {double result = Math.Round(put, put); return result} 在另一个方法中 来简化小数位数 double x = 3.1415926; double y = x.Round(4); *这里的x.Round如果没有上面的this的话是不存在的，就是说这里的Round是自己创造的* 。
+顾名思义自己弄一个方法出来，具体操作如下 public static double Round(this double put，int out) {double result = Math.Round(put, put); return result} 在另一个方法中 来简化小数位数 double x = 3.1415926; double y = x.Round(4); *这里的x.Round如果没有上面的this的话是不存在的，就是说这里的Round是自己创造的* 。*扩展方法必须是公有，静态的，必须被 public static所修饰，同时必须是形参列表中的最后一个。*
+### LINQ方法
+eg ```C#
+    class Program
+{
+    static void Main(string[] args)
+    {
+        var myList = new List<int>(){ 11, 12, 9, 14, 15 };
+        //bool result = AllGreaterThanTen(myList);
+        // 这里的 All 就是一个扩展方法
+        bool result = myList.All(i => i > 10);
+        Console.WriteLine(result);
+    }
+
+    static bool AllGreaterThanTen(List<int> intList)
+    {
+        foreach (var item in intList)
+        {
+            if (item <= 10)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
