@@ -43,7 +43,8 @@ https://www.runoob.com/csharp/csharp-operators.html
 顾名思义自己弄一个方法出来，具体操作如下 public static double Round(this double put，int out) {double result = Math.Round(put, put); return result} 在另一个方法中 来简化小数位数 double x = 3.1415926; double y = x.Round(4); *这里的x.Round如果没有上面的this的话是不存在的，就是说这里的Round是自己创造的* 。*扩展方法必须是公有，静态的，必须被 public static所修饰，同时必须是形参列表中的最后一个。*
 ### LINQ方法
 eg 
-    ```class Program
+```
+class Program
 {
     static void Main(string[] args)
     {
