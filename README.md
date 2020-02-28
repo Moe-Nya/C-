@@ -126,3 +126,64 @@ public delegate 目标方法的返回值类型 委托类型(根据目标方法�
 ### 委托的使用
 正确使用1：“模板方法”，“借用”借用指定的外部方法来产生结果。<br>
 正确使用2：“回调方法（callback）”，调用指定的外部方法。<br>
+缺点：1.这是一种方法级别的紧耦合，现实工作中慎之又慎。2.把委托回调，异步调用和多线程纠缠在一起，让代码变得难以阅读和维护。3.委托使用不当可能导致内存泄漏和程序性能下降。
+### 委托的高级使用
+1.多播（multicast）委托：一个委托里面还有多个委托。<br>
+```
+using System;
+using System.Threading;
+
+namespace DelegateExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var stu1 = new Student { ID = 1, PenColor = ConsoleColor.Yellow };
+            var stu2 = new Student { ID = 2, PenColor = ConsoleColor.Green };
+            var stu3 = new Student { ID = 3, PenColor = ConsoleColor.Red };
+            var action1 = new Action(stu1.DoHomework);
+            var action2 = new Action(stu2.DoHomework);
+            var action3 = new Action(stu3.DoHomework);
+
+            // 单播委托
+            //action1.Invoke();
+            //action2.Invoke();
+            //action3.Invoke();
+
+            // 多播委托
+            action1 += action2;
+            action1 += action3;
+
+            action1.Invoke();
+        }
+    }
+
+    class Student
+    {
+        public int ID { get; set; }
+        public ConsoleColor PenColor { get; set; }
+
+        public void DoHomework()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Console.ForegroundColor = PenColor;
+                Console.WriteLine("Student {0} doing homework {1} hour(s)", ID, i);
+                Thread.Sleep(1000);
+            }
+        }
+    }
+}
+```
+2.隐式异步调用（注意“同步”和“异步”的中英文意思的差距）<br>
+3.应该适时的地使用接口（interface）取代一些对委托的使用。
+## 事件详解1
+定义：Event，“能够发生的事情”<br>
+角色：使对象或类具备通知能力的成员<br>
+使用：用于对象或类间的动作协调与信息传递（消息推送）<br>
+事件的功能 = 通知 + 可选的事件参数（即详细信息）
+## 事件详解2
+事件模型的5个组成部分：1.事件的拥有者（event source 对象） 2.事件成员（event 成员） 3.事件的响应者（event subscriber 对象） 4.事件的处理器（event handler 成员）--本质上是一个回调方法 5.事件订阅--把事件处理器和事件关联在一起，本质上是一种以委托类型为基础的“约定”。<br>
+事件不会“发声”，一定是被拥有者的某些内部逻辑所触发才会“发声”。<br>
+事件订阅的操作符是“+=”，左边是事件，右边是事件处理器
