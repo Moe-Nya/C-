@@ -186,4 +186,226 @@ namespace DelegateExample
 ## 事件详解2
 事件模型的5个组成部分：1.事件的拥有者（event source 对象） 2.事件成员（event 成员） 3.事件的响应者（event subscriber 对象） 4.事件的处理器（event handler 成员）--本质上是一个回调方法 5.事件订阅--把事件处理器和事件关联在一起，本质上是一种以委托类型为基础的“约定”。<br>
 事件不会“发声”，一定是被拥有者的某些内部逻辑所触发才会“发声”。<br>
-事件订阅的操作符是“+=”，左边是事件，右边是事件处理器
+事件订阅的操作符是“+=”，左边是事件，右边是事件处理器。
+## 事件的声明方式
+### 事件完整声明方式
+```
+using System;
+using System.Threading;
+
+namespace EventExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // 1.事件拥有者
+            var customer=new Customer();
+            // 2.事件响应者
+            var waiter=new Waiter();
+            // 3.Order 事件成员 5. +=事件订阅
+            customer.Order += waiter.Action;
+
+            customer.Action();
+            customer.PayTheBill();
+        }
+    }
+
+    // 该类用于传递点的是什么菜，作为事件参数，需要以 EventArgs 结尾，且继承 EventArgs
+    public class OrderEventArgs:EventArgs
+    {
+        public string DishName { get; set; }
+
+        public string Size { get; set; }
+    }
+
+    // 声明一个委托类型，因为该委托用于事件处理，所以以 EventHandler 结尾
+    // 注意委托类型的声明和类声明是平级的
+    public delegate void OrderEventHandler(Customer customer, OrderEventArgs e);
+
+    public class Customer
+    {
+        // 委托类型字段
+        private OrderEventHandler orderEventHandler;
+
+        // 事件声明
+        public event OrderEventHandler Order
+        {
+            add { this.orderEventHandler += value; }
+            remove { this.orderEventHandler -= value; }
+        }
+
+        public double Bill { get; set; }
+
+        public void PayTheBill()
+        {
+            Console.WriteLine("I will pay ${0}.",this.Bill);
+        }
+
+        public void WalkIn()
+        {
+            Console.WriteLine("Walk into the restaurant");
+        }
+
+        public void SitDown()
+        {
+            Console.WriteLine("Sit down.");
+        }
+
+        public void Think()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine("Let me think ...");
+                Thread.Sleep(1000);
+            }
+
+            if (this.orderEventHandler != null)
+            {
+                var e=new OrderEventArgs();
+                e.DishName = "Kongpao Chicken";
+                e.Size = "large";
+
+                this.orderEventHandler.Invoke(this,e);
+            }
+        }
+
+        public void Action()
+        {
+            Console.ReadLine();
+            this.WalkIn();
+            this.SitDown();
+            this.Think();
+        }
+    }
+
+    public class Waiter
+    {
+        // 4.事件处理器
+        public void Action(Customer customer, OrderEventArgs e)
+        {
+            Console.WriteLine("I will serve you the dish - {0}.",e.DishName);
+
+            double price = 10;
+            switch (e.Size)
+            {
+                case "small":
+                    price *= 0.5;
+                    break;
+                case "large":
+                    price *= 1.5;
+                    break;
+                default:
+                    break;
+            }
+            customer.Bill += price;
+        }
+    }
+}
+```
+### 事件简略声明方式
+```
+using System;
+using System.Threading;
+
+namespace EventExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // 1.事件拥有者
+            var customer=new Customer();
+            // 2.事件响应者
+            var waiter=new Waiter();
+            // 3.Order 事件成员 5. +=事件订阅
+            customer.Order += waiter.Action;
+
+            customer.Action();
+            customer.PayTheBill();
+        }
+    }
+
+    public class OrderEventArgs:EventArgs
+    {
+        public string DishName { get; set; }
+
+        public string Size { get; set; }
+    }
+
+    public delegate void OrderEventHandler(Customer customer, OrderEventArgs e);
+
+    public class Customer
+    {
+        // 简略事件声明，看上去像一个委托（delegate）类型字段
+        public event OrderEventHandler Order;
+
+        public double Bill { get; set; }
+
+        public void PayTheBill()
+        {
+            Console.WriteLine("I will pay ${0}.",this.Bill);
+        }
+
+        public void WalkIn()
+        {
+            Console.WriteLine("Walk into the restaurant");
+        }
+
+        public void SitDown()
+        {
+            Console.WriteLine("Sit down.");
+        }
+
+        public void Think()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine("Let me think ...");
+                Thread.Sleep(1000);
+            }
+
+            if (this.Order != null)
+            {
+                var e=new OrderEventArgs();
+                e.DishName = "Kongpao Chicken";
+                e.Size = "large";
+
+                this.Order.Invoke(this,e);
+            }
+        }
+
+        public void Action()
+        {
+            Console.ReadLine();
+            this.WalkIn();
+            this.SitDown();
+            this.Think();
+        }
+    }
+
+    public class Waiter
+    {
+        // 4.事件处理器
+        public void Action(Customer customer, OrderEventArgs e)
+        {
+            Console.WriteLine("I will serve you the dish - {0}.",e.DishName);
+
+            double price = 10;
+            switch (e.Size)
+            {
+                case "small":
+                    price *= 0.5;
+                    break;
+                case "large":
+                    price *= 1.5;
+                    break;
+                default:
+                    break;
+            }
+            customer.Bill += price;
+        }
+    }
+}
+```
+### 事件的本质是委托字段的一个包装器，这个包装器对委托字段的访问起限制作用。
