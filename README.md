@@ -1,5 +1,5 @@
-# C-
-my study notes
+# C-sharp
+my study note
 单纯的用来做一个C#学习的笔记，不要问我为啥变成C-了，我也不知道。
 ### Solution 解决方案 一个solution里面可以有多个project。
 # 类 class 
